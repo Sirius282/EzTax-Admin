@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EzTax — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0F766E;--teal-mid:#14B8A6;--teal-light:#CCFBF1;--teal-pale:#F0FDFA;
+  --navy:#0F172A;--navy-mid:#1E293B;--slate:#475569;--slate-light:#94A3B8;
+  --gray-100:#F1F5F9;--gray-200:#E2E8F0;--gray-300:#CBD5E1;
+  --amber:#D97706;--amber-light:#FEF3C7;
+  --blue:#2563EB;--blue-light:#EFF6FF;
+  --rose:#E11D48;--rose-light:#FFF1F2;
+  --green:#16A34A;--green-light:#F0FDF4;
+  --purple:#7C3AED;--purple-light:#EDE9FE;
+  --gold:#F59E0B;--white:#FFFFFF;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#F1F5F9;color:var(--navy);min-height:100vh;font-size:15px;}
+h1,h2,h3,h4{font-family:'Sora',sans-serif;}
+
+/* NAV */
+nav{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:300;}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo-mark{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:12px;color:white;}
+.logo-text{font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:white;}
+.logo-text span{color:var(--teal-mid);}
+.admin-badge{background:var(--rose);color:white;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:4px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.notif-btn{width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;font-size:14px;color:white;}
+.notif-dot{width:7px;height:7px;background:var(--rose);border-radius:50%;position:absolute;top:6px;right:6px;border:1.5px solid var(--navy);}
+.admin-av{width:32px;height:32px;border-radius:50%;background:var(--teal);color:white;border:none;cursor:pointer;font-family:'Sora',sans-serif;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.nav-text{font-size:0.78rem;color:rgba(255,255,255,0.6);}
+
+/* LAYOUT */
+.app-layout{display:flex;min-height:calc(100vh - 60px);}
+.sidebar{width:210px;background:var(--navy-mid);padding:1rem 0;flex-shrink:0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;}
+.sidebar-section{padding:0 0.75rem;margin-bottom:1.25rem;}
+.sidebar-label{font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;padding:0 0.75rem;margin-bottom:0.5rem;}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:0.84rem;font-weight:500;color:rgba(255,255,255,0.65);transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.sidebar-item:hover{background:rgba(255,255,255,0.08);color:white;}
+.sidebar-item.active{background:var(--teal);color:white;font-weight:600;}
+.sidebar-item .icon{font-size:0.95rem;flex-shrink:0;}
+.sidebar-badge{margin-left:auto;background:var(--rose);color:white;font-size:0.62rem;font-weight:700;padding:1px 6px;border-radius:999px;}
+.sidebar-badge.amber{background:var(--amber);}
+.sidebar-badge.teal{background:var(--teal);}
+.main{flex:1;padding:1.75rem;overflow-x:hidden;}
+
+/* PAGES */
+.page{display:none;animation:fadeIn 0.2s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+
+/* LOGIN */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy),#1a1a2e);padding:2rem;}
+.auth-card{background:white;border-radius:var(--radius-lg);padding:2.5rem;width:100%;max-width:400px;box-shadow:var(--shadow-md);}
+.auth-card h2{font-size:1.3rem;font-weight:800;margin-bottom:4px;}
+.auth-card p{color:var(--slate);font-size:0.84rem;margin-bottom:1.5rem;}
+.form-group{margin-bottom:1rem;}
+.form-group label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:4px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:inherit;font-size:0.875rem;color:var(--navy);outline:none;transition:border-color 0.18s;background:white;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);}
+.form-group textarea{resize:vertical;min-height:80px;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:560px){.input-row{grid-template-columns:1fr;}}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:var(--radius-sm);font-size:0.84rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px;}
+.btn-sm{padding:6px 12px;font-size:0.78rem;}
+.btn-xs{padding:4px 9px;font-size:0.72rem;}
+.btn-primary{background:var(--teal);color:white;}
+.btn-primary:hover{background:var(--teal-mid);}
+.btn-outline{background:white;border:1.5px solid var(--gray-200);color:var(--slate);}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal);}
+.btn-danger{background:var(--rose-light);color:var(--rose);border:1.5px solid #FCA5A5;}
+.btn-danger:hover{background:#FEE2E2;}
+.btn-success{background:var(--green-light);color:var(--green);border:1.5px solid #BBF7D0;}
+.btn-amber{background:var(--amber-light);color:var(--amber);border:1.5px solid #FDE68A;}
+.btn-purple{background:var(--purple-light);color:var(--purple);border:1.5px solid #DDD6FE;}
+.btn-full{width:100%;}
+.btn-row{display:flex;gap:7px;justify-content:flex-end;margin-top:1.25rem;flex-wrap:wrap;}
+
+/* CARDS */
+.card{background:white;border-radius:var(--radius-lg);padding:1.4rem;border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);}
+.card-title{font-size:0.92rem;font-weight:700;color:var(--navy);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card-title-left{display:flex;align-items:center;gap:7px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:white;border-radius:var(--radius-md);padding:1.1rem 1.25rem;border:1px solid var(--gray-200);border-left:4px solid var(--teal);}
+.stat-card.blue{border-left-color:var(--blue);}
+.stat-card.amber{border-left-color:var(--amber);}
+.stat-card.rose{border-left-color:var(--rose);}
+.stat-card.purple{border-left-color:var(--purple);}
+.stat-card.green{border-left-color:var(--green);}
+.stat-label{font-size:0.7rem;color:var(--slate);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.stat-value{font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;}
+.stat-sub{font-size:0.7rem;color:var(--slate);margin-top:2px;}
+.stat-trend{font-size:0.7rem;font-weight:600;margin-top:3px;}
+.trend-up{color:var(--green);}
+.trend-down{color:var(--rose);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:0.83rem;}
+thead th{background:var(--gray-100);padding:9px 13px;text-align:left;font-weight:600;font-size:0.75rem;color:var(--slate);border-bottom:2px solid var(--gray-200);white-space:nowrap;}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+tbody tr:hover td{background:#FAFBFC;}
+tbody tr:last-child td{border:none;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:999px;font-size:0.7rem;font-weight:700;}
+.badge-active{background:var(--teal-light);color:var(--teal);}
+.badge-pending{background:var(--amber-light);color:var(--amber);}
+.badge-done{background:var(--green-light);color:var(--green);}
+.badge-reject{background:var(--rose-light);color:var(--rose);}
+.badge-blue{background:var(--blue-light);color:var(--blue);}
+.badge-purple{background:var(--purple-light);color:var(--purple);}
+
+/* ALERT */
+.alert{padding:10px 14px;border-radius:var(--radius-sm);font-size:0.82rem;line-height:1.6;margin-bottom:1.25rem;display:flex;gap:8px;align-items:flex-start;}
+.alert-info{background:var(--blue-light);border:1px solid #BFDBFE;color:#1E40AF;}
+.alert-warn{background:var(--amber-light);border:1px solid #FDE68A;color:#92400E;}
+.alert-success{background:var(--green-light);border:1px solid #BBF7D0;color:#14532D;}
+.alert-danger{background:var(--rose-light);border:1px solid #FCA5A5;color:#9F1239;}
+
+/* VERIFIKASI CARD */
+.verif-card{background:white;border-radius:var(--radius-md);padding:1.25rem;border:1px solid var(--gray-200);margin-bottom:0.875rem;display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;}
+.verif-av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:1rem;flex-shrink:0;}
+.verif-info h4{font-size:0.9rem;font-weight:700;margin-bottom:2px;}
+.verif-info p{font-size:0.78rem;color:var(--slate);line-height:1.5;}
+.verif-right{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start;}
+
+/* LAPORAN ITEM */
+.laporan-item{padding:1rem 1.25rem;border-radius:var(--radius-md);border:1px solid var(--gray-200);background:white;margin-bottom:0.75rem;display:flex;gap:1rem;align-items:flex-start;}
+.lap-icon{font-size:1.5rem;flex-shrink:0;}
+.lap-info h4{font-size:0.875rem;font-weight:700;margin-bottom:3px;}
+.lap-info p{font-size:0.78rem;color:var(--slate);line-height:1.5;}
+.lap-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+
+/* DIVIDER */
+.divider{border:none;border-top:1px solid var(--gray-100);margin:1.1rem 0;}
+
+/* NOTIF DROPDOWN */
+.notif-drop{display:none;position:fixed;top:66px;right:16px;width:300px;background:white;border-radius:var(--radius-lg);box-shadow:var(--shadow-md);border:1px solid var(--gray-200);z-index:400;}
+.notif-drop.open{display:block;animation:fadeIn 0.18s ease;}
+.notif-dh{padding:11px 15px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.notif-dh h4{font-size:0.875rem;font-weight:700;}
+.nd-item{padding:10px 15px;border-bottom:1px solid var(--gray-100);display:flex;gap:10px;cursor:pointer;}
+.nd-item:hover{background:var(--gray-100);}
+.nd-item:last-child{border:none;}
+.nd-icon{font-size:1rem;flex-shrink:0;}
+.nd-text h5{font-size:0.77rem;font-weight:600;}
+.nd-text p{font-size:0.7rem;color:var(--slate);margin-top:1px;}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .sidebar.mobile-open{display:block;position:fixed;top:60px;left:0;bottom:0;z-index:200;width:210px;}
+  .main{padding:1rem;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .hamburger{display:flex!important;}
+}
+.hamburger{display:none;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:rgba(255,255,255,0.1);border-radius:var(--radius-sm);cursor:pointer;font-size:1rem;color:white;}
+</style>
+</head>
+<body>
+
+<!-- ====== LOGIN ====== -->
+<div id="login-screen">
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;">
+      <div class="logo-mark">Ez</div>
+      <span style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:var(--navy);">Ez<span style="color:var(--teal-mid);">Tax</span></span>
+      <span class="admin-badge">Admin</span>
+    </div>
+    <h2>Admin Panel</h2>
+    <p>Masuk dengan akun administrator EzTax</p>
+    <div class="alert alert-info">ℹ️ Demo: klik masuk untuk menjelajahi panel admin.</div>
+    <div class="form-group"><label>Email Admin</label><input type="email" value="admin@eztax.id" placeholder="admin@eztax.id"></div>
+    <div class="form-group"><label>Password</label><input type="password" value="adminpass" placeholder="Password admin"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:0.5rem;" onclick="doLogin()">Masuk ke Admin Panel</button>
+  </div>
+</div>
+</div>
+
+<!-- ====== MAIN APP ====== -->
+<div id="main-app" style="display:none;">
+
+<nav>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="logo">
+      <div class="logo-mark">Ez</div>
+      <span class="logo-text">Ez<span>Tax</span></span>
+      <span class="admin-badge">Admin</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-text">Administrator</span>
+    <button class="notif-btn" onclick="toggleNotif()">🔔<span class="notif-dot"></span></button>
+    <div class="admin-av">AD</div>
+    <button class="btn btn-xs" style="background:rgba(255,255,255,0.1);color:white;border:none;" onclick="doLogout()">Keluar</button>
+  </div>
+</nav>
+
+<!-- NOTIF -->
+<div class="notif-drop" id="notif-drop">
+  <div class="notif-dh"><h4>🔔 Notifikasi Admin</h4><button onclick="toggleNotif()" style="background:none;border:none;cursor:pointer;color:var(--slate);">✕</button></div>
+  <div class="nd-item"><div class="nd-icon">🆕</div><div class="nd-text"><h5>5 konsultan baru menunggu verifikasi</h5><p>Perlu tindakan segera</p></div></div>
+  <div class="nd-item"><div class="nd-icon">⚠️</div><div class="nd-text"><h5>Laporan baru dari pengguna</h5><p>Konsultan Bowo mendapat keluhan</p></div></div>
+  <div class="nd-item"><div class="nd-icon">📈</div><div class="nd-text"><h5>Rekor sesi harian</h5><p>247 sesi terjadi hari ini — tertinggi bulan ini</p></div></div>
+  <div class="nd-item"><div class="nd-icon">💰</div><div class="nd-text"><h5>Pendapatan bulan ini melampaui target</h5><p>Rp 52,3jt dari target Rp 50jt</p></div></div>
+</div>
+
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Utama</div>
+      <button class="sidebar-item active" id="sb-dashboard" onclick="showPage('dashboard')"><span class="icon">📊</span> Dashboard</button>
+      <button class="sidebar-item" id="sb-verifikasi" onclick="showPage('verifikasi')"><span class="icon">✅</span> Verifikasi Konsultan <span class="sidebar-badge amber">5</span></button>
+      <button class="sidebar-item" id="sb-laporan" onclick="showPage('laporan')"><span class="icon">⚠️</span> Laporan & Keluhan <span class="sidebar-badge">3</span></button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Manajemen</div>
+      <button class="sidebar-item" id="sb-pengguna" onclick="showPage('pengguna')"><span class="icon">👥</span> Pengguna</button>
+      <button class="sidebar-item" id="sb-konsultan" onclick="showPage('konsultan')"><span class="icon">🏆</span> Konsultan</button>
+      <button class="sidebar-item" id="sb-sesi" onclick="showPage('sesi')"><span class="icon">💬</span> Monitor Sesi</button>
+      <button class="sidebar-item" id="sb-edukasi" onclick="showPage('edukasi')"><span class="icon">📚</span> Konten Edukasi</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Keuangan</div>
+      <button class="sidebar-item" id="sb-keuangan" onclick="showPage('keuangan')"><span class="icon">💰</span> Pendapatan Platform</button>
+      <button class="sidebar-item" id="sb-listing" onclick="showPage('listing')"><span class="icon">🏷️</span> Listing Fee</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sistem</div>
+      <button class="sidebar-item" id="sb-pengaturan" onclick="showPage('pengaturan')"><span class="icon">⚙️</span> Pengaturan</button>
+      <button class="sidebar-item" onclick="doLogout()"><span class="icon">🚪</span> Keluar</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="main">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page active" id="page-dashboard">
+      <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.25rem;font-weight:800;">Dashboard Admin</h2>
+        <p style="color:var(--slate);font-size:0.84rem;">Selasa, 18 Maret 2025 — Ringkasan platform EzTax</p>
+      </div>
+
+      <div class="alert alert-warn">⚠️ <strong>5 konsultan menunggu verifikasi dokumen.</strong> <a onclick="showPage('verifikasi')" style="color:var(--amber);font-weight:700;cursor:pointer;">Tinjau sekarang →</a></div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Pengguna</div><div class="stat-value" style="color:var(--teal);">1.842</div><div class="stat-trend trend-up">↑ 12% minggu ini</div></div>
+        <div class="stat-card blue"><div class="stat-label">Konsultan Aktif</div><div class="stat-value" style="color:var(--blue);">87</div><div class="stat-sub">dari 92 terdaftar</div></div>
+        <div class="stat-card amber"><div class="stat-label">Sesi Hari Ini</div><div class="stat-value" style="color:var(--amber);">247</div><div class="stat-trend trend-up">↑ Rekor baru!</div></div>
+        <div class="stat-card green"><div class="stat-label">Pendapatan Bulan Ini</div><div class="stat-value" style="color:var(--green);">52,3jt</div><div class="stat-sub">Target: Rp 50jt ✅</div></div>
+        <div class="stat-card rose"><div class="stat-label">Keluhan Aktif</div><div class="stat-value" style="color:var(--rose);">3</div><div class="stat-sub">Perlu ditangani</div></div>
+        <div class="stat-card purple"><div class="stat-label">Verifikasi Pending</div><div class="stat-value" style="color:var(--purple);">5</div><div class="stat-sub">Konsultan baru</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🆕 Konsultan Menunggu Verifikasi</div><button class="btn btn-outline btn-xs" onclick="showPage('verifikasi')">Lihat Semua</button></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--amber-light);border-radius:var(--radius-sm);">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.8rem;">HN</div>
+              <div style="flex:1;"><div style="font-size:0.82rem;font-weight:600;">Hendra Nugroho, S.E.</div><div style="font-size:0.72rem;color:var(--slate);">Brevet B • Daftar 2 jam lalu</div></div>
+              <div style="display:flex;gap:4px;"><button class="btn btn-success btn-xs" onclick="approveK('Hendra Nugroho')">✓</button><button class="btn btn-danger btn-xs" onclick="rejectK('Hendra Nugroho')">✕</button></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--amber-light);border-radius:var(--radius-sm);">
+              <div style="width:32px;height:32px;border-radius:50%;background:#7C3AED;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.8rem;">PL</div>
+              <div style="flex:1;"><div style="font-size:0.82rem;font-weight:600;">Putri Lestari, M.Ak.</div><div style="font-size:0.72rem;color:var(--slate);">Brevet B • Daftar kemarin</div></div>
+              <div style="display:flex;gap:4px;"><button class="btn btn-success btn-xs" onclick="approveK('Putri Lestari')">✓</button><button class="btn btn-danger btn-xs" onclick="rejectK('Putri Lestari')">✕</button></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--amber-light);border-radius:var(--radius-sm);">
+              <div style="width:32px;height:32px;border-radius:50%;background:#EA580C;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.8rem;">RW</div>
+              <div style="flex:1;"><div style="font-size:0.82rem;font-weight:600;">Rudi Wibowo, BKP</div><div style="font-size:0.72rem;color:var(--slate);">Brevet C • Daftar 3 hari lalu</div></div>
+              <div style="display:flex;gap:4px;"><button class="btn btn-success btn-xs" onclick="approveK('Rudi Wibowo')">✓</button><button class="btn btn-danger btn-xs" onclick="rejectK('Rudi Wibowo')">✕</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">⚠️ Keluhan Terbaru</div><button class="btn btn-outline btn-xs" onclick="showPage('laporan')">Lihat Semua</button></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="padding:10px;background:var(--rose-light);border-radius:var(--radius-sm);border:1px solid #FCA5A5;">
+              <div style="font-size:0.8rem;font-weight:700;color:var(--rose);margin-bottom:3px;">🔴 Tinggi — Respons terlambat</div>
+              <div style="font-size:0.78rem;color:var(--navy);">Klien: Fajar D. vs Konsultan: Bowo Widodo</div>
+              <div style="font-size:0.72rem;color:var(--slate);margin-top:2px;">Konsultan tidak merespons dalam 2 jam</div>
+            </div>
+            <div style="padding:10px;background:var(--amber-light);border-radius:var(--radius-sm);border:1px solid #FDE68A;">
+              <div style="font-size:0.8rem;font-weight:700;color:var(--amber);margin-bottom:3px;">🟡 Sedang — Saran kurang tepat</div>
+              <div style="font-size:0.78rem;color:var(--navy);">Klien: Siti A. vs Konsultan: Rizki P.</div>
+              <div style="font-size:0.72rem;color:var(--slate);margin-top:2px;">Klien merasa info PPh 21 kurang akurat</div>
+            </div>
+            <div style="padding:10px;background:var(--blue-light);border-radius:var(--radius-sm);border:1px solid #BFDBFE;">
+              <div style="font-size:0.8rem;font-weight:700;color:var(--blue);margin-bottom:3px;">🔵 Rendah — Teknis platform</div>
+              <div style="font-size:0.78rem;color:var(--navy);">Klien: Ahmad M. — Upload dokumen gagal</div>
+              <div style="font-size:0.72rem;color:var(--slate);margin-top:2px;">Bug upload di Safari iOS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;">
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">📈 Statistik Sesi 7 Hari Terakhir</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;"><span style="width:80px;color:var(--slate);">Selasa 18</span><div style="flex:1;background:var(--gray-200);border-radius:999px;height:10px;overflow:hidden;"><div style="width:100%;height:100%;background:var(--teal);border-radius:999px;"></div></div><span style="width:40px;text-align:right;font-weight:600;">247</span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;"><span style="width:80px;color:var(--slate);">Senin 17</span><div style="flex:1;background:var(--gray-200);border-radius:999px;height:10px;overflow:hidden;"><div style="width:83%;height:100%;background:var(--teal);border-radius:999px;"></div></div><span style="width:40px;text-align:right;font-weight:600;">205</span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;"><span style="width:80px;color:var(--slate);">Minggu 16</span><div style="flex:1;background:var(--gray-200);border-radius:999px;height:10px;overflow:hidden;"><div style="width:60%;height:100%;background:var(--blue);border-radius:999px;"></div></div><span style="width:40px;text-align:right;font-weight:600;">148</span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;"><span style="width:80px;color:var(--slate);">Sabtu 15</span><div style="flex:1;background:var(--gray-200);border-radius:999px;height:10px;overflow:hidden;"><div style="width:73%;height:100%;background:var(--blue);border-radius:999px;"></div></div><span style="width:40px;text-align:right;font-weight:600;">179</span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;"><span style="width:80px;color:var(--slate);">Jumat 14</span><div style="flex:1;background:var(--gray-200);border-radius:999px;height:10px;overflow:hidden;"><div style="width:88%;height:100%;background:var(--teal);border-radius:999px;"></div></div><span style="width:40px;text-align:right;font-weight:600;">217</span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;"><span style="width:80px;color:var(--slate);">Kamis 13</span><div style="flex:1;background:var(--gray-200);border-radius:999px;height:10px;overflow:hidden;"><div style="width:78%;height:100%;background:var(--teal);border-radius:999px;"></div></div><span style="width:40px;text-align:right;font-weight:600;">192</span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;"><span style="width:80px;color:var(--slate);">Rabu 12</span><div style="flex:1;background:var(--gray-200);border-radius:999px;height:10px;overflow:hidden;"><div style="width:65%;height:100%;background:var(--blue);border-radius:999px;"></div></div><span style="width:40px;text-align:right;font-weight:600;">160</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">💰 Pendapatan Platform</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:0.84rem;">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:var(--slate);">Komisi sesi (10%)</span><span style="font-weight:700;">Rp 28,7jt</span></div><div style="background:var(--gray-200);border-radius:999px;height:7px;"><div style="width:55%;height:100%;background:var(--teal);border-radius:999px;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:var(--slate);">Listing fee</span><span style="font-weight:700;">Rp 23,6jt</span></div><div style="background:var(--gray-200);border-radius:999px;height:7px;"><div style="width:45%;height:100%;background:var(--blue);border-radius:999px;"></div></div></div>
+            <div class="divider"></div>
+            <div style="display:flex;justify-content:space-between;font-weight:800;"><span>Total</span><span style="color:var(--teal);">Rp 52,3jt</span></div>
+            <div style="display:flex;justify-content:space-between;color:var(--slate);font-size:0.75rem;"><span>Target bulan ini</span><span>Rp 50jt ✅</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VERIFIKASI ===== -->
+    <div class="page" id="page-verifikasi">
+      <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.25rem;font-weight:800;">Verifikasi Konsultan</h2>
+        <p style="color:var(--slate);font-size:0.84rem;">Tinjau dan setujui pendaftaran konsultan baru</p>
+      </div>
+      <div class="alert alert-warn">⚠️ 5 konsultan menunggu verifikasi. Proses dalam 1–3 hari kerja sesuai SLA platform.</div>
+
+      <div id="verif-list">
+        <div class="verif-card" id="vc-HN">
+          <div class="verif-av" style="background:var(--amber);">HN</div>
+          <div class="verif-info">
+            <h4>Hendra Nugroho, S.E.</h4>
+            <p>Brevet B — IKPI 2019 &nbsp;|&nbsp; 5 tahun pengalaman<br>Spesialisasi: PPh Orang Pribadi, UMKM<br>Email: hendra@konsultan.com &nbsp;|&nbsp; Daftar: 2 jam lalu</p>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <span class="badge badge-pending">Menunggu Verifikasi</span>
+              <button class="btn btn-outline btn-xs" onclick="alert('Lihat dokumen: Sertifikat_Brevet_B_Hendra.pdf')">📄 Lihat Sertifikat</button>
+            </div>
+          </div>
+          <div class="verif-right">
+            <button class="btn btn-success btn-sm" onclick="approveK('Hendra Nugroho','vc-HN')">✅ Setujui</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectK('Hendra Nugroho','vc-HN')">❌ Tolak</button>
+            <button class="btn btn-purple btn-xs" onclick="alert('Minta dokumen tambahan ke Hendra Nugroho')">📋 Minta Dok. Tambahan</button>
+          </div>
+        </div>
+
+        <div class="verif-card" id="vc-PL">
+          <div class="verif-av" style="background:#7C3AED;">PL</div>
+          <div class="verif-info">
+            <h4>Putri Lestari, M.Ak.</h4>
+            <p>Brevet B — IAI 2020 &nbsp;|&nbsp; 4 tahun pengalaman<br>Spesialisasi: PPh Badan, PPN, Laporan Keuangan<br>Email: putri@email.com &nbsp;|&nbsp; Daftar: kemarin</p>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <span class="badge badge-pending">Menunggu Verifikasi</span>
+              <button class="btn btn-outline btn-xs" onclick="alert('Lihat dokumen: Sertifikat_Brevet_B_Putri.pdf')">📄 Lihat Sertifikat</button>
+            </div>
+          </div>
+          <div class="verif-right">
+            <button class="btn btn-success btn-sm" onclick="approveK('Putri Lestari','vc-PL')">✅ Setujui</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectK('Putri Lestari','vc-PL')">❌ Tolak</button>
+            <button class="btn btn-purple btn-xs" onclick="alert('Minta dokumen tambahan ke Putri Lestari')">📋 Minta Dok. Tambahan</button>
+          </div>
+        </div>
+
+        <div class="verif-card" id="vc-RW">
+          <div class="verif-av" style="background:#EA580C;">RW</div>
+          <div class="verif-info">
+            <h4>Rudi Wibowo, BKP</h4>
+            <p>Brevet C — IKPI 2015 &nbsp;|&nbsp; 10 tahun pengalaman<br>Spesialisasi: Pajak Internasional, Transfer Pricing<br>Email: rudi@konsultan.com &nbsp;|&nbsp; Daftar: 3 hari lalu</p>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <span class="badge badge-pending">Menunggu Verifikasi</span>
+              <button class="btn btn-outline btn-xs" onclick="alert('Lihat dokumen: Sertifikat_Brevet_C_Rudi.pdf')">📄 Lihat Sertifikat</button>
+            </div>
+          </div>
+          <div class="verif-right">
+            <button class="btn btn-success btn-sm" onclick="approveK('Rudi Wibowo','vc-RW')">✅ Setujui</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectK('Rudi Wibowo','vc-RW')">❌ Tolak</button>
+            <button class="btn btn-purple btn-xs" onclick="alert('Minta dokumen tambahan ke Rudi Wibowo')">📋 Minta Dok. Tambahan</button>
+          </div>
+        </div>
+
+        <div class="verif-card" id="vc-MS">
+          <div class="verif-av" style="background:#0284C7;">MS</div>
+          <div class="verif-info">
+            <h4>Maya Sari, S.E., M.M.</h4>
+            <p>Brevet B — IAI 2018 &nbsp;|&nbsp; 7 tahun pengalaman<br>Spesialisasi: UMKM, Freelancer, PPh Final<br>Email: maya@email.com &nbsp;|&nbsp; Daftar: 4 hari lalu</p>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <span class="badge badge-pending">Menunggu Verifikasi</span>
+              <button class="btn btn-outline btn-xs" onclick="alert('Lihat dokumen: Sertifikat_Brevet_B_Maya.pdf')">📄 Lihat Sertifikat</button>
+            </div>
+          </div>
+          <div class="verif-right">
+            <button class="btn btn-success btn-sm" onclick="approveK('Maya Sari','vc-MS')">✅ Setujui</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectK('Maya Sari','vc-MS')">❌ Tolak</button>
+            <button class="btn btn-purple btn-xs" onclick="alert('Minta dokumen tambahan ke Maya Sari')">📋 Minta Dok. Tambahan</button>
+          </div>
+        </div>
+
+        <div class="verif-card" id="vc-FH">
+          <div class="verif-av" style="background:#DB2777;">FH</div>
+          <div class="verif-info">
+            <h4>Fauzan Hakim, S.H., BKP</h4>
+            <p>Brevet B — IKPI 2017 &nbsp;|&nbsp; 8 tahun pengalaman<br>Spesialisasi: Sengketa Pajak, Keberatan, Banding<br>Email: fauzan@email.com &nbsp;|&nbsp; Daftar: 5 hari lalu</p>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <span class="badge badge-pending">Menunggu Verifikasi</span>
+              <button class="btn btn-outline btn-xs" onclick="alert('Lihat dokumen: Sertifikat_Brevet_B_Fauzan.pdf')">📄 Lihat Sertifikat</button>
+            </div>
+          </div>
+          <div class="verif-right">
+            <button class="btn btn-success btn-sm" onclick="approveK('Fauzan Hakim','vc-FH')">✅ Setujui</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectK('Fauzan Hakim','vc-FH')">❌ Tolak</button>
+            <button class="btn btn-purple btn-xs" onclick="alert('Minta dokumen tambahan ke Fauzan Hakim')">📋 Minta Dok. Tambahan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LAPORAN ===== -->
+    <div class="page" id="page-laporan">
+      <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.25rem;font-weight:800;">Laporan & Keluhan</h2>
+        <p style="color:var(--slate);font-size:0.84rem;">Tangani keluhan pengguna dan monitor sengketa</p>
+      </div>
+      <div class="laporan-item" style="border-left:4px solid var(--rose);">
+        <div class="lap-icon">🔴</div>
+        <div class="lap-info">
+          <h4>Respons Terlambat — Tinggi</h4>
+          <p>Klien <strong>Fajar Darmawan</strong> melaporkan konsultan <strong>Bowo Widodo</strong> tidak merespons selama 2+ jam pada sesi Basic yang dijanjikan dibalas dalam 2 jam.</p>
+          <div style="margin-top:6px;font-size:0.75rem;color:var(--slate);">Dilaporkan: 18 Mar 2025, 12:30 &nbsp;|&nbsp; Sesi ID: #SES-4821</div>
+        </div>
+        <div class="lap-right">
+          <span class="badge badge-reject">Belum Ditangani</span>
+          <button class="btn btn-primary btn-xs" onclick="alert('Membuka penanganan laporan #SES-4821')">Tangani</button>
+          <button class="btn btn-amber btn-xs" onclick="alert('Peringatan dikirim ke Bowo Widodo')">Peringatkan Konsultan</button>
+        </div>
+      </div>
+      <div class="laporan-item" style="border-left:4px solid var(--amber);">
+        <div class="lap-icon">🟡</div>
+        <div class="lap-info">
+          <h4>Informasi Kurang Akurat — Sedang</h4>
+          <p>Klien <strong>Siti Aminah</strong> merasa saran PPh 21 dari konsultan <strong>Rizki Pratama</strong> tidak sesuai dengan kondisi gaji di bawah PTKP miliknya.</p>
+          <div style="margin-top:6px;font-size:0.75rem;color:var(--slate);">Dilaporkan: 17 Mar 2025, 15:45 &nbsp;|&nbsp; Sesi ID: #SES-4798</div>
+        </div>
+        <div class="lap-right">
+          <span class="badge badge-pending">Dalam Proses</span>
+          <button class="btn btn-outline btn-xs" onclick="alert('Melihat riwayat sesi #SES-4798')">Lihat Sesi</button>
+          <button class="btn btn-success btn-xs" onclick="alert('Laporan ditutup')">Tutup Laporan</button>
+        </div>
+      </div>
+      <div class="laporan-item" style="border-left:4px solid var(--blue);">
+        <div class="lap-icon">🔵</div>
+        <div class="lap-info">
+          <h4>Bug Upload Dokumen — Rendah (Teknis)</h4>
+          <p>Klien <strong>Ahmad Maulana</strong> tidak dapat mengupload file PDF di Safari iOS 17. Tombol upload tidak merespons setelah file dipilih.</p>
+          <div style="margin-top:6px;font-size:0.75rem;color:var(--slate);">Dilaporkan: 16 Mar 2025, 09:20 &nbsp;|&nbsp; Bug ID: #BUG-112</div>
+        </div>
+        <div class="lap-right">
+          <span class="badge badge-blue">Bug Report</span>
+          <button class="btn btn-outline btn-xs" onclick="alert('Bug #BUG-112 diteruskan ke tim teknis')">Teruskan ke Dev</button>
+          <button class="btn btn-success btn-xs" onclick="alert('Laporan ditutup')">Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PENGGUNA ===== -->
+    <div class="page" id="page-pengguna">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div><h2 style="font-size:1.25rem;font-weight:800;">Manajemen Pengguna</h2><p style="color:var(--slate);font-size:0.84rem;">1.842 pengguna terdaftar</p></div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" placeholder="🔍 Cari pengguna..." style="padding:7px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:inherit;font-size:0.84rem;outline:none;width:200px;">
+          <select style="padding:7px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:inherit;font-size:0.84rem;outline:none;"><option>Semua Status</option><option>Aktif</option><option>Dinonaktifkan</option></select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nama</th><th>Email</th><th>Jenis WP</th><th>Daftar</th><th>Total Sesi</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Budi Santoso</strong></td><td>budi@email.com</td><td>Karyawan</td><td>10 Jan 2025</td><td>1</td><td><span class="badge badge-active">Aktif</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+              <tr><td><strong>Rina Mayasari</strong></td><td>rina@email.com</td><td>Freelancer</td><td>5 Feb 2025</td><td>3</td><td><span class="badge badge-active">Aktif</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+              <tr><td><strong>Ahmad Maulana</strong></td><td>ahmad@email.com</td><td>Karyawan</td><td>1 Mar 2025</td><td>1</td><td><span class="badge badge-active">Aktif</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+              <tr><td><strong>Dewi Kusuma</strong></td><td>dewi@email.com</td><td>UMKM</td><td>20 Feb 2025</td><td>2</td><td><span class="badge badge-active">Aktif</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+              <tr><td><strong>Fajar Darmawan</strong></td><td>fajar@email.com</td><td>Karyawan</td><td>15 Mar 2025</td><td>1</td><td><span class="badge badge-reject">Laporan Aktif</span></td><td><button class="btn btn-outline btn-xs" onclick="showPage('laporan')">Lihat Laporan</button></td></tr>
+              <tr><td><strong>Siti Aminah</strong></td><td>siti@email.com</td><td>Karyawan</td><td>8 Mar 2025</td><td>1</td><td><span class="badge badge-pending">Laporan Proses</span></td><td><button class="btn btn-outline btn-xs" onclick="showPage('laporan')">Lihat Laporan</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== KONSULTAN ===== -->
+    <div class="page" id="page-konsultan">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div><h2 style="font-size:1.25rem;font-weight:800;">Manajemen Konsultan</h2><p style="color:var(--slate);font-size:0.84rem;">87 aktif dari 92 terdaftar</p></div>
+        <input type="text" placeholder="🔍 Cari konsultan..." style="padding:7px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:inherit;font-size:0.84rem;outline:none;width:200px;">
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nama</th><th>Sertifikasi</th><th>Spesialisasi</th><th>Rating</th><th>Total Sesi</th><th>Listing</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Ardi Rahman, BKP</strong></td><td>Brevet B</td><td>PPh OP, Freelancer</td><td>⭐ 4.9</td><td>247</td><td><span class="badge badge-active">Aktif 7 hari</span></td><td><span class="badge badge-done">✅ Verified</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+              <tr><td><strong>Sari Rahayu, S.E.</strong></td><td>Brevet B</td><td>UMKM, PPh Final</td><td>⭐ 4.8</td><td>164</td><td><span class="badge badge-done">Aktif 15 hari</span></td><td><span class="badge badge-done">✅ Verified</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+              <tr><td><strong>Bowo Widodo, BKP</strong></td><td>Brevet C</td><td>Pajak Internasional</td><td>⭐ 4.95</td><td>512</td><td><span class="badge badge-done">Aktif 20 hari</span></td><td><span class="badge badge-reject">⚠️ Laporan Aktif</span></td><td><button class="btn btn-danger btn-xs" onclick="alert('Mengirim peringatan ke Bowo Widodo')">Peringatkan</button></td></tr>
+              <tr><td><strong>Rizki Pratama, S.E.</strong></td><td>Brevet A&B</td><td>Freelancer, PPh 25</td><td>⭐ 4.6</td><td>76</td><td><span class="badge badge-active">Aktif 3 hari</span></td><td><span class="badge badge-pending">⚠️ Investigasi</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MONITOR SESI ===== -->
+    <div class="page" id="page-sesi">
+      <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.25rem;font-weight:800;">Monitor Sesi Real-time</h2>
+        <p style="color:var(--slate);font-size:0.84rem;">Pantau sesi yang sedang berlangsung — <strong style="color:var(--teal);">247 sesi aktif hari ini</strong></p>
+      </div>
+      <div class="stats-row" style="margin-bottom:1.25rem;">
+        <div class="stat-card"><div class="stat-label">Sesi Aktif Sekarang</div><div class="stat-value" style="color:var(--teal);">23</div></div>
+        <div class="stat-card blue"><div class="stat-label">Sesi Basic</div><div class="stat-value" style="color:var(--blue);">112</div><div class="stat-sub">Hari ini</div></div>
+        <div class="stat-card"><div class="stat-label">Sesi Standard</div><div class="stat-value" style="color:var(--teal);">98</div><div class="stat-sub">Hari ini</div></div>
+        <div class="stat-card rose"><div class="stat-label">Sesi Premium</div><div class="stat-value" style="color:var(--rose);">37</div><div class="stat-sub">Hari ini</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-left">🔴 Sesi Aktif Sekarang (23)</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID Sesi</th><th>Pengguna</th><th>Konsultan</th><th>Paket</th><th>Mulai</th><th>Sisa Waktu</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>#SES-4850</td><td>Budi Santoso</td><td>Ardi Rahman</td><td><span class="badge badge-active">Standard</span></td><td>14:00</td><td>47 mnt</td><td><span style="color:#22C55E;font-weight:600;">● Berjalan</span></td></tr>
+              <tr><td>#SES-4849</td><td>Mega Putri</td><td>Sari Rahayu</td><td><span class="badge badge-blue">Basic</span></td><td>14:10</td><td>22 mnt</td><td><span style="color:#22C55E;font-weight:600;">● Berjalan</span></td></tr>
+              <tr><td>#SES-4848</td><td>PT Global Tech</td><td>Bowo Widodo</td><td style="color:var(--rose);font-weight:700;">Premium</td><td>13:00</td><td>88 mnt</td><td><span style="color:#22C55E;font-weight:600;">● Berjalan</span></td></tr>
+              <tr><td>#SES-4847</td><td>Rahmi Nisa</td><td>Dewi Kusuma</td><td><span class="badge badge-active">Standard</span></td><td>14:05</td><td>53 mnt</td><td><span style="color:#22C55E;font-weight:600;">● Berjalan</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EDUKASI ===== -->
+    <div class="page" id="page-edukasi">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div><h2 style="font-size:1.25rem;font-weight:800;">Konten Edukasi</h2><p style="color:var(--slate);font-size:0.84rem;">Kelola artikel edukasi perpajakan gratis</p></div>
+        <button class="btn btn-primary btn-sm" onclick="alert('Form tambah artikel baru')">+ Tambah Artikel</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Judul</th><th>Kategori</th><th>Dilihat</th><th>Link DJP</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Apa Itu Coretax? Panduan Lengkap</strong></td><td>Coretax</td><td>3.241</td><td>✅ Ada</td><td><span class="badge badge-done">Tayang</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-xs">Edit</button><button class="btn btn-danger btn-xs">Arsip</button></div></td></tr>
+              <tr><td><strong>Cara Mengisi SPT 1770S di Coretax</strong></td><td>SPT Tahunan</td><td>2.876</td><td>✅ Ada</td><td><span class="badge badge-done">Tayang</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-xs">Edit</button><button class="btn btn-danger btn-xs">Arsip</button></div></td></tr>
+              <tr><td><strong>PPh 21: PTKP dan Tarif Progresif</strong></td><td>PPh 21</td><td>1.954</td><td>✅ Ada</td><td><span class="badge badge-done">Tayang</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-xs">Edit</button><button class="btn btn-danger btn-xs">Arsip</button></div></td></tr>
+              <tr><td><strong>Pajak UMKM: PPh Final 0.5%</strong></td><td>UMKM</td><td>1.432</td><td>✅ Ada</td><td><span class="badge badge-done">Tayang</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-xs">Edit</button><button class="btn btn-danger btn-xs">Arsip</button></div></td></tr>
+              <tr><td><strong>Aktivasi EFIN: Kunci Layanan DJP</strong></td><td>Pemula</td><td>987</td><td>✅ Ada</td><td><span class="badge badge-done">Tayang</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-xs">Edit</button><button class="btn btn-danger btn-xs">Arsip</button></div></td></tr>
+              <tr><td><strong>Pajak Freelancer: Berbagai Klien</strong></td><td>Freelancer</td><td>743</td><td>✅ Ada</td><td><span class="badge badge-done">Tayang</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-xs">Edit</button><button class="btn btn-danger btn-xs">Arsip</button></div></td></tr>
+              <tr><td><strong>Panduan Angsuran PPh 25</strong></td><td>PPh 25</td><td>0</td><td>❌ Belum</td><td><span class="badge badge-pending">Draft</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-outline btn-xs">Edit</button><button class="btn btn-success btn-xs">Tayangkan</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== KEUANGAN ===== -->
+    <div class="page" id="page-keuangan">
+      <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.25rem;font-weight:800;">Pendapatan Platform</h2>
+        <p style="color:var(--slate);font-size:0.84rem;">Ringkasan keuangan platform EzTax</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Bulan Ini</div><div class="stat-value" style="color:var(--teal);">Rp 52,3jt</div><div class="stat-trend trend-up">↑ 18% dari bulan lalu</div></div>
+        <div class="stat-card blue"><div class="stat-label">Komisi Sesi</div><div class="stat-value" style="color:var(--blue);">Rp 28,7jt</div><div class="stat-sub">1.438 sesi × komisi</div></div>
+        <div class="stat-card amber"><div class="stat-label">Listing Fee</div><div class="stat-value" style="color:var(--amber);">Rp 23,6jt</div><div class="stat-sub">79 konsultan aktif</div></div>
+        <div class="stat-card green"><div class="stat-label">Target Bulan Ini</div><div class="stat-value" style="color:var(--green);">Rp 50jt</div><div class="stat-sub">✅ Tercapai 104%</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-left">📊 Pendapatan 6 Bulan Terakhir</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Bulan</th><th>Komisi Sesi</th><th>Listing Fee</th><th>Total</th><th>vs Bulan Lalu</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Maret 2025</strong></td><td>Rp 28.700.000</td><td>Rp 23.601.000</td><td style="font-weight:800;color:var(--teal);">Rp 52.301.000</td><td class="trend-up">↑ 18%</td></tr>
+              <tr><td>Februari 2025</td><td>Rp 22.500.000</td><td>Rp 21.903.000</td><td style="font-weight:700;">Rp 44.403.000</td><td class="trend-up">↑ 23%</td></tr>
+              <tr><td>Januari 2025</td><td>Rp 17.200.000</td><td>Rp 18.907.000</td><td style="font-weight:700;">Rp 36.107.000</td><td class="trend-up">↑ 31%</td></tr>
+              <tr><td>Desember 2024</td><td>Rp 12.100.000</td><td>Rp 15.417.000</td><td style="font-weight:700;">Rp 27.517.000</td><td class="trend-up">↑ 8%</td></tr>
+              <tr><td>November 2024</td><td>Rp 10.800.000</td><td>Rp 14.715.000</td><td style="font-weight:700;">Rp 25.515.000</td><td class="trend-up">↑ 12%</td></tr>
+              <tr><td>Oktober 2024</td><td>Rp 9.100.000</td><td>Rp 13.713.000</td><td style="font-weight:700;">Rp 22.813.000</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LISTING ===== -->
+    <div class="page" id="page-listing">
+      <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.25rem;font-weight:800;">Manajemen Listing Fee</h2>
+        <p style="color:var(--slate);font-size:0.84rem;">Pantau status listing seluruh konsultan</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-left">🏷️ Status Listing Konsultan</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Konsultan</th><th>Mulai</th><th>Berakhir</th><th>Sisa Hari</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Ardi Rahman, BKP</strong></td><td>1 Mar 2025</td><td>1 Apr 2025</td><td style="color:var(--amber);font-weight:700;">7 hari</td><td><span class="badge badge-active">Aktif</span></td><td><button class="btn btn-outline btn-xs" onclick="alert('Kirim reminder ke Ardi Rahman')">Kirim Reminder</button></td></tr>
+              <tr><td><strong>Sari Rahayu, S.E.</strong></td><td>1 Mar 2025</td><td>1 Apr 2025</td><td style="color:var(--amber);font-weight:700;">7 hari</td><td><span class="badge badge-active">Aktif</span></td><td><button class="btn btn-outline btn-xs" onclick="alert('Kirim reminder ke Sari Rahayu')">Kirim Reminder</button></td></tr>
+              <tr><td><strong>Bowo Widodo, BKP</strong></td><td>1 Mar 2025</td><td>1 Apr 2025</td><td style="color:var(--green);font-weight:700;">20 hari</td><td><span class="badge badge-done">Aktif</span></td><td><button class="btn btn-outline btn-xs">Detail</button></td></tr>
+              <tr><td><strong>Lestari Handayani</strong></td><td>15 Feb 2025</td><td>15 Mar 2025</td><td style="color:var(--rose);font-weight:700;">Sudah habis</td><td><span class="badge badge-reject">Expired</span></td><td><button class="btn btn-amber btn-xs" onclick="alert('Kirim tagihan perpanjangan ke Lestari Handayani')">Tagih Perpanjangan</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PENGATURAN ===== -->
+    <div class="page" id="page-pengaturan">
+      <div style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.25rem;font-weight:800;">Pengaturan Platform</h2>
+        <p style="color:var(--slate);font-size:0.84rem;">Konfigurasi sistem dan kebijakan EzTax</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">💰 Kebijakan Harga</div></div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:0.875rem;">
+            <div class="form-group" style="margin:0;"><label>Harga Paket Basic (Rp)</label><input type="number" value="50000"></div>
+            <div class="form-group" style="margin:0;"><label>Harga Paket Standard (Rp)</label><input type="number" value="150000"></div>
+            <div class="form-group" style="margin:0;"><label>Harga Paket Premium (Rp)</label><input type="number" value="350000"></div>
+            <div class="form-group" style="margin:0;"><label>Komisi Platform (%)</label><input type="number" value="10"></div>
+            <div class="form-group" style="margin:0;"><label>Listing Fee Bulanan (Rp)</label><input type="number" value="299000"></div>
+            <button class="btn btn-primary btn-sm" onclick="alert('Pengaturan harga disimpan')">Simpan Perubahan</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">⚙️ Pengaturan Sistem</div></div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:0.875rem;">
+            <div class="form-group" style="margin:0;"><label>Batas Respons Basic (menit)</label><input type="number" value="120"></div>
+            <div class="form-group" style="margin:0;"><label>Batas Respons Standard (menit)</label><input type="number" value="60"></div>
+            <div class="form-group" style="margin:0;"><label>Batas Respons Premium (menit)</label><input type="number" value="30"></div>
+            <div class="form-group" style="margin:0;"><label>Maks. Upload Dokumen (MB)</label><input type="number" value="5"></div>
+            <div class="form-group" style="margin:0;"><label>SLA Verifikasi Konsultan (hari)</label><input type="number" value="3"></div>
+            <button class="btn btn-primary btn-sm" onclick="alert('Pengaturan sistem disimpan')">Simpan Perubahan</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🔔 Notifikasi Otomatis</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:0.875rem;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> Reminder listing 7 hari sebelum habis</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> Alert jika konsultan tidak merespons melebihi batas</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> Notifikasi pengguna batas waktu SPT (31 Maret)</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> Email konfirmasi booking ke pengguna & konsultan</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"> Laporan keuangan mingguan ke admin</label>
+            <button class="btn btn-primary btn-sm" onclick="alert('Pengaturan notifikasi disimpan')">Simpan</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🔗 Integrasi Eksternal</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--green-light);border-radius:var(--radius-sm);border:1px solid #BBF7D0;font-size:0.82rem;"><span>✅ Coretax DJP API</span><a href="https://coretax.pajak.go.id" target="_blank" style="color:var(--blue);font-weight:600;font-size:0.75rem;">Buka ↗</a></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--green-light);border-radius:var(--radius-sm);border:1px solid #BBF7D0;font-size:0.82rem;"><span>✅ Payment Gateway</span><span style="font-size:0.75rem;color:var(--slate);">Midtrans</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--amber-light);border-radius:var(--radius-sm);border:1px solid #FDE68A;font-size:0.82rem;"><span>⚠️ Email Service</span><span style="font-size:0.75rem;color:var(--amber);font-weight:600;">Konfigurasi ulang</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--rose-light);border-radius:var(--radius-sm);border:1px solid #FCA5A5;font-size:0.82rem;"><span>❌ Video Call API</span><span style="font-size:0.75rem;color:var(--rose);font-weight:600;">Belum terhubung</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .main -->
+</div><!-- end .app-layout -->
+</div><!-- end #main-app -->
+
+<script>
+function doLogin(){ document.getElementById('login-screen').style.display='none'; document.getElementById('main-app').style.display='block'; }
+function doLogout(){ document.getElementById('main-app').style.display='none'; document.getElementById('login-screen').style.display='block'; }
+
+function showPage(pg){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pg).classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  const sb=document.getElementById('sb-'+pg); if(sb) sb.classList.add('active');
+  window.scrollTo(0,0);
+  document.getElementById('sidebar').classList.remove('mobile-open');
+}
+
+function approveK(name, cardId){
+  if(confirm('Setujui konsultan '+name+'? Profil akan langsung aktif di platform.')){
+    if(cardId){ const el=document.getElementById(cardId); if(el) el.style.display='none'; }
+    alert('✅ '+name+' telah disetujui. Email konfirmasi dikirim ke konsultan.');
+  }
+}
+function rejectK(name, cardId){
+  if(confirm('Tolak pendaftaran '+name+'? Konsultan akan mendapat email pemberitahuan alasan penolakan.')){
+    if(cardId){ const el=document.getElementById(cardId); if(el) el.style.display='none'; }
+    alert('❌ Pendaftaran '+name+' ditolak. Email penolakan dikirim.');
+  }
+}
+
+function toggleNotif(){ document.getElementById('notif-drop').classList.toggle('open'); }
+document.addEventListener('click',e=>{ if(!e.target.closest('#notif-drop')&&!e.target.closest('.notif-btn')) document.getElementById('notif-drop').classList.remove('open'); });
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('mobile-open'); }
+</script>
+</body>
+</html>

@@ -159,12 +159,32 @@ tbody tr:last-child td{border:none;}
 .nd-text p{font-size:0.7rem;color:var(--slate);margin-top:1px;}
 
 /* MOBILE */
+.sidebar-overlay{display:none;}
 @media(max-width:768px){
+  nav{padding:0 1rem;}
+  .logo-text{font-size:1.02rem;}
+  .nav-text{display:none;}
   .sidebar{display:none;}
-  .sidebar.mobile-open{display:block;position:fixed;top:60px;left:0;bottom:0;z-index:200;width:210px;}
+  .sidebar.mobile-open{display:block;position:fixed;top:60px;left:0;bottom:0;z-index:260;width:230px;box-shadow:var(--shadow-md);}
+  .sidebar-overlay.open{display:block;position:fixed;inset:0;top:60px;background:rgba(15,23,42,0.4);z-index:250;}
   .main{padding:1rem;}
   .stats-row{grid-template-columns:1fr 1fr;}
+  .admin-grid-2{grid-template-columns:1fr!important;}
   .hamburger{display:flex!important;}
+
+  .auth-card{padding:1.75rem;}
+
+  .verif-card,.laporan-item{flex-direction:column;}
+  .verif-right,.lap-right{margin-left:0;width:100%;justify-content:flex-start;}
+  .verif-right .btn,.lap-right .btn{flex:1;}
+
+  table{font-size:0.78rem;}
+  thead th,tbody td{padding:8px 10px;}
+
+  .notif-drop{width:calc(100vw - 24px);right:12px;left:12px;}
+
+  .btn-row{justify-content:stretch;}
+  .btn-row .btn{flex:1;justify-content:center;}
 }
 .hamburger{display:none;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:rgba(255,255,255,0.1);border-radius:var(--radius-sm);cursor:pointer;font-size:1rem;color:white;}
 </style>
@@ -219,6 +239,7 @@ tbody tr:last-child td{border:none;}
   <div class="nd-item"><div class="nd-icon">💰</div><div class="nd-text"><h5>Pendapatan bulan ini melampaui target</h5><p>Rp 52,3jt dari target Rp 50jt</p></div></div>
 </div>
 
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div class="app-layout">
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
@@ -268,7 +289,7 @@ tbody tr:last-child td{border:none;}
         <div class="stat-card purple"><div class="stat-label">Verifikasi Pending</div><div class="stat-value" style="color:var(--purple);">5</div><div class="stat-sub">Konsultan baru</div></div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+      <div class="admin-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
         <div class="card">
           <div class="card-title"><div class="card-title-left">🆕 Konsultan Menunggu Verifikasi</div><button class="btn btn-outline btn-xs" onclick="showPage('verifikasi')">Lihat Semua</button></div>
           <div style="display:flex;flex-direction:column;gap:8px;">
@@ -311,7 +332,7 @@ tbody tr:last-child td{border:none;}
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;">
+      <div class="admin-grid-2" style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;">
         <div class="card">
           <div class="card-title"><div class="card-title-left">📈 Statistik Sesi 7 Hari Terakhir</div></div>
           <div style="display:flex;flex-direction:column;gap:8px;">
@@ -637,7 +658,7 @@ tbody tr:last-child td{border:none;}
         <h2 style="font-size:1.25rem;font-weight:800;">Pengaturan Platform</h2>
         <p style="color:var(--slate);font-size:0.84rem;">Konfigurasi sistem dan kebijakan EzTax</p>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+      <div class="admin-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
         <div class="card">
           <div class="card-title"><div class="card-title-left">💰 Kebijakan Harga</div></div>
           <div style="display:flex;flex-direction:column;gap:12px;font-size:0.875rem;">
@@ -698,6 +719,7 @@ function showPage(pg){
   const sb=document.getElementById('sb-'+pg); if(sb) sb.classList.add('active');
   window.scrollTo(0,0);
   document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
 }
 
 function approveK(name, cardId){
@@ -715,7 +737,10 @@ function rejectK(name, cardId){
 
 function toggleNotif(){ document.getElementById('notif-drop').classList.toggle('open'); }
 document.addEventListener('click',e=>{ if(!e.target.closest('#notif-drop')&&!e.target.closest('.notif-btn')) document.getElementById('notif-drop').classList.remove('open'); });
-function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('mobile-open'); }
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
 </script>
 </body>
 </html>
